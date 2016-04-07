@@ -30,21 +30,8 @@ spectrogram(left,NUMEL,NUMELOVER,[],Fs,'yaxis', 'MinThreshold',-200);
 
 %ricerca precisa estremi 8'000 - 40'000
 DIMF=size(f);
-FROM=round(8000*DIMF(1)/f(DIMF(1)));
-while round(f(FROM))>8000
-        FROM=FROM-1;
-end
-while round(f(FROM))<8000
-        FROM=FROM+1;
-end
-
-TO=round(40000*DIMF(1)/f(DIMF(1)));
-while round(f(TO))>40000
-        TO=TO-1;
-end
-while round(f(TO))<40000
-        TO=TO+1;
-end    
+FROM=searchFrequencyIndex(f,8000);
+TO=searchFrequencyIndex(f,40000);  
     
 
 DIMT = size(t);
