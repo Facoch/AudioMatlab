@@ -12,11 +12,15 @@ duration = length(y)/Fs;
 interval=duration;
 M=[];
 SplitLeft =1;   %1
-SplitRight =0;  %1
 Continuity=1;   %2 
-mirSplit =1;    %3   
+mirSplit =1;    %3 
+Channel=0;       %change channel (0 --> left, 1 --> right)
 
-% Split left channel
+if(Channel)   
+    y(:,[1 2])=y(:,[2 1]);
+end
+
+% Split
 if(SplitLeft)
     if duration>interval
         for i=1:(1+duration/interval)
@@ -37,32 +41,8 @@ if(SplitLeft)
         M=vertcat(M,m);
     end
 end
-
-% Split right channel
-if(SplitRight)
-    y1=y;
-    y1(:,[1 2])=y1(:,[2 1]);
-    if duration>interval
-        for i=1:(1+duration/interval)
-            if i<=fix(duration/interval)
-                split=y(1+Fs*interval*(i-1) : Fs*interval*i+1);
-            end
-            if i>fix(duration/interval)
-                split=y(1+Fs*interval*(i-1): Fs*duration+1);
-            end
-            m = analizeSplit(split, Fs, i-1, interval);
-            M=vertcat(M,m);
-
-        end
-    end
-    if duration<=interval
-        split=y(1: Fs*duration);
-        m= analizeSplit(split,Fs,0, interval);
-        M=vertcat(M,m);
-    end
-end
    
-% Continuity left channel
+% Continuity
 if(Continuity)
     if duration>interval
         for i=1:(1+duration/interval)
@@ -84,7 +64,7 @@ if(Continuity)
     end
 end
 
-% MirSplit left channel
+% MirSplit
 if(mirSplit)   
     if duration>interval
         for i=1:(1+duration/interval)
@@ -109,4 +89,5 @@ end
 %sort by time the matrix of all possibile cuts
 [V,I]=sort(M(:,1));
 M = M(I,:);
+M(:,4)=1:length(M);
 M
