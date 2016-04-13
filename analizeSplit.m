@@ -12,7 +12,7 @@ spectrogram(audio, Nfft, round(0.5*Nfft), Nfft, Fs,'yaxis');
 
 
 %search index of 15,20,35 kHz (FROM, TO1, TO2)
-FROM=searchFrequencyIndex(f,15000);%*Fs/96000);
+FROM=searchFrequencyIndex(f,17000);%*Fs/96000);
 TO1=searchFrequencyIndex(f,30000);%*Fs/96000);
 TO2=searchFrequencyIndex(f,35000);%*Fs/96000);
 
