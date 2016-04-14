@@ -1,18 +1,18 @@
-%this function returns the table 'x' containing the information about the
+%this function returns the matrix 'm' containing the information about the
 %potential cuts on my audio file
 function [m]= analizeContinuity(audio,Fs, k, interval)
 
 %define FFT parameters
 Nfft= 8192;  
 %generate the spectogram's matrices
-[s,f,t,ps]=spectrogram(audio, Nfft, round(0.5*Nfft), Nfft, Fs,'yaxis');
+[s,f,t,ps]=spectrogram(audio, Nfft, Fs/50, Nfft, Fs,'yaxis','MinThreshold', -205);
 %draw spectograms
 %figure(k+3);
-%spectrogram(audio, Nfft, round(0.5*Nfft), Nfft, Fs,'yaxis');  
+%spectrogram(audio, Nfft, Fs/50), Nfft, Fs,'yaxis','MinThreshold', -205);  
 
 %search index of 15,20 kHz (FROM, TO1, TO2)
 FROM=searchFrequencyIndex(f,15000);
-TO=searchFrequencyIndex(f,30000);
+TO=searchFrequencyIndex(f,35000);
 
 %inizialize parameters
 DIMT = size(t);
@@ -28,11 +28,17 @@ V=[DIMT(2)];
     pw=db(S2/(1+TO-FROM));
     V(j)=pw;
  end
- 
+
+%calculate the moving average at 40%
+movingAverage = smooth(V,0.4,'moving');
+%cuts the V values under moving average
+V(V<movingAverage') = movingAverage(V<movingAverage');
+
+%find peaks
 figure(k+4);
-findpeaks(V,t,'MinPeakProminence',6,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-246,'Annotate','extents')
-[m(2,:),m(1,:)]= findpeaks(V,t,'MinPeakProminence',6,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-246,'Annotate','extents');
-for i=1:(numel(m)/2)
+findpeaks(V,t,'MinPeakProminence',5,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-245,'Annotate','extents')
+[m(2,:),m(1,:)]= findpeaks(V,t,'MinPeakProminence',5,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-245,'Annotate','extents');
+for i=1:length(m)
      time= (m(1,i)+interval*k);   
      m(1,i)=fix(time/60)+(time-fix(time/60)*60)/100;
 end

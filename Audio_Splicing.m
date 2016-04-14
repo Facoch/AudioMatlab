@@ -14,11 +14,12 @@ M=[];
 SplitLeft =1;   %1
 Continuity=1;   %2 
 mirSplit =1;    %3 
-Channel=0;       %change channel (0 --> left, 1 --> right)
+Channel=0;      %change channel (0 --> left, 1 --> right)
 
 if(Channel)   
     y(:,[1 2])=y(:,[2 1]);
 end
+%y = y/max(abs(y));  %peak normalization
 
 % Split
 if(SplitLeft)
