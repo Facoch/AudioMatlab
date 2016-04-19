@@ -13,7 +13,9 @@ interval=duration;
 M=[];
 SplitLeft =1;   %1
 Continuity=1;   %2 
-mirSplit =1;    %3 
+mirCentroid =1; %3
+mirSkew=1;      %4
+mirBrigth=1;    %5
 Channel=0;      %change channel (0 --> left, 1 --> right)
 
 if(Channel)   
@@ -23,72 +25,35 @@ end
 
 % Split
 if(SplitLeft)
-    if duration>interval
-        for i=1:(1+duration/interval)
-            if i<=fix(duration/interval)
-                split=y(1+Fs*interval*(i-1) : Fs*interval*i+1);
-            end
-            if i>fix(duration/interval)
-                split=y(1+Fs*interval*(i-1): Fs*duration+1);
-            end
-            m = analizeSplit(split, Fs, i-1, interval);
-            M=vertcat(M,m);
-
-        end
-    end
-    if duration<=interval
-        split=y(1: Fs*duration);
-        m= analizeSplit(split,Fs,0, interval);
+        m= analizeSplit(y(:,1)',Fs,0, interval);
         M=vertcat(M,m);
-    end
 end
    
 % Continuity
 if(Continuity)
-    if duration>interval
-        for i=1:(1+duration/interval)
-            if i<=fix(duration/interval)
-                split=y(1+Fs*interval*(i-1) : Fs*interval*i+1);
-            end
-            if i>fix(duration/interval)
-                split=y(1+Fs*interval*(i-1): Fs*duration+1);
-            end
-            m = analizeContinuity(split, Fs, i-1, interval);
-            M= vertcat(M,m);
-
-        end
-    end
-    if duration<=interval
-        split=y(1: Fs*duration);
-        [m]= analizeContinuity(split,Fs,0, interval);
+        m= analizeContinuity(y(:,1)',Fs,0, interval);
         M=vertcat(M,m); 
-    end
 end
 
 % MirSplit
-if(mirSplit)   
-    if duration>interval
-        for i=1:(1+duration/interval)
-            if i<=fix(duration/interval)
-                split=y(1+Fs*interval*(i-1) : Fs*interval*i+1);
-            end
-            if i>fix(duration/interval)
-                split=y(1+Fs*interval*(i-1): Fs*duration+1);
-            end
-            m = mirAnalizeSplit(split, Fs, i-1, interval);
-            M= vertcat(M,m);
-
-        end
-    end
-    if duration<=interval
-        split=y(1: Fs*duration);
-        [m]= mirAnalizeSplit(split,Fs,0, interval);
+if(mirCentroid)   
+        m= mirAnalizeSplit(y(:,1)',Fs,0, interval);
         M=vertcat(M,m); 
-    end
 end
 
+% MirBrigth
+if(mirBrigth)   
+        m= mirAnalizeBrigth(y(:,1)',Fs,0, interval);
+        M=vertcat(M,m); 
+end
+
+% MirSkew
+if(mirSkew)   
+        m= mirAnalizeSkew(y(:,1)',Fs,0, interval);
+        M=vertcat(M,m); 
+end
 %sort by time the matrix of all possibile cuts
 [V,I]=sort(M(:,1));
 M = M(I,:);
-M(:,4)=1:length(M);
+M(:,5)=1:length(M);
 M

@@ -6,7 +6,7 @@ mirverbose(0); %mir doesn't write in command window
 AU = miraudio(audio',Fs);
 SPEC = mirspectrum(AU, 'Frame','dB','Min', 15000, 'Max',35000);
 c= mircentroid(SPEC);
-TIME= get(SPEC, 'XScale') %CAPIRE COME MAI
+
 DATA= mirgetdata(c)/100;
 duration=length(audio)/Fs;
 T=[duration/numel(DATA):duration/numel(DATA):duration];
@@ -26,5 +26,6 @@ for i=1:length(m)
 end
 m=m';
 m(:,3)=3;
+m(:,4)=0.2;
 
 
