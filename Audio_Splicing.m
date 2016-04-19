@@ -21,39 +21,46 @@ Channel=0;      %change channel (0 --> left, 1 --> right)
 if(Channel)   
     y(:,[1 2])=y(:,[2 1]);
 end
-%y = y/max(abs(y));  %peak normalization
+%y = y/max(abs(y));  %peak normalization?
 
 % Split
 if(SplitLeft)
         m= analizeSplit(y(:,1)',Fs,0, interval);
-        M=vertcat(M,m);
+        M=merger(M,m, 'analizeSplit');
 end
    
 % Continuity
 if(Continuity)
         m= analizeContinuity(y(:,1)',Fs,0, interval);
-        M=vertcat(M,m); 
+        M=merger(M,m,'analizeContinuity'); 
 end
 
 % MirSplit
 if(mirCentroid)   
         m= mirAnalizeSplit(y(:,1)',Fs,0, interval);
-        M=vertcat(M,m); 
-end
-
-% MirBrigth
-if(mirBrigth)   
-        m= mirAnalizeBrigth(y(:,1)',Fs,0, interval);
-        M=vertcat(M,m); 
+        M=merger(M,m,'analizeContinuity'); 
 end
 
 % MirSkew
 if(mirSkew)   
         m= mirAnalizeSkew(y(:,1)',Fs,0, interval);
-        M=vertcat(M,m); 
+        M=merger(M,m,'analizeContinuity'); 
 end
-%sort by time the matrix of all possibile cuts
-[V,I]=sort(M(:,1));
-M = M(I,:);
-M(:,5)=1:length(M);
-M
+
+% MirBrigth
+if(mirBrigth)   
+        m= mirAnalizeBrigth(y(:,1)',Fs,0, interval);
+        M=merger(M,m,'analizeContinuity');  
+end
+
+%add the index column
+M(5,:)=1:length(M);
+M'
+%T = array2table(M','VariableNames',{'Secondi','Valore','Algoritmo', 'Probability','Numero'})
+[rm, cm]=size(M);
+fileID = fopen('tagli.txt','a');
+fprintf(fileID,'\r\n\r\nRISULTATI FINALI\r\nSecondi    Valore    Algoritmo n°  Probabilità   Numero');
+for i=1:cm
+    fprintf(fileID,'\r\n%7.4f   %7.2f        %d           %3.2f          %2d',M(:,i));
+end
+fclose(fileID);

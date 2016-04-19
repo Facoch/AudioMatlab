@@ -6,7 +6,7 @@ mirverbose(0); %mir doesn't write in command window
 AU = miraudio(audio',Fs);
 SPEC = mirspectrum(AU, 'Frame',0.1,'dB','Min', 15000, 'Max',35000);
 
-skewness = mirskewness(SPEC);        %SKEWNESS mostra il coefficente di asimmetria
+skewness = mirskewness(SPEC);        %SKEWNESS: asymmetry coefficient
 s= -mirgetdata(skewness)*100;
 
 duration=length(audio)/Fs;
@@ -19,15 +19,12 @@ s(s<movingAverage') = movingAverage(s<movingAverage');
 
 %find peaks
 figure(k+6);
-[m(2,:),m(1,:)]=findpeaks(s,T,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents');
 findpeaks(s,T,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents')
+[m(2,:),m(1,:)]=findpeaks(s,T,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents');
 m(3,:)=4;
 m(4,:)=0.2;
-for i=1:length(m)
-     time= (m(1,i)+interval*k);   
-     m(1,i)=fix(time/60)+(time-fix(time/60)*60)/100;
-end
-m=m';
+
+
 
 
 

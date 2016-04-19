@@ -4,9 +4,9 @@ function [m]= analizeContinuity(audio,Fs, k, interval)
 
 %define FFT parameters
 Nfft= 8192;  
-%generate the spectogram's matrices
+%generate the spectrogram's matrices
 [s,f,t,ps]=spectrogram(audio, Nfft, Fs/50, Nfft, Fs,'yaxis','MinThreshold', -205);
-%draw spectograms
+%draw spectrograms
 %figure(k+3);
 %spectrogram(audio, Nfft, Fs/50), Nfft, Fs,'yaxis','MinThreshold', -205);  
 
@@ -16,7 +16,6 @@ TO=searchFrequencyIndex(f,35000);
 
 %inizialize parameters
 DIMT = size(t);
-COUNT=1;
 V=[DIMT(2)];
  for j=1:DIMT(2)
     S1=0;
@@ -38,10 +37,8 @@ V(V<movingAverage') = movingAverage(V<movingAverage');
 figure(k+4);
 findpeaks(V,t,'MinPeakProminence',5,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-245,'Annotate','extents')
 [m(2,:),m(1,:)]= findpeaks(V,t,'MinPeakProminence',5,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-245,'Annotate','extents');
-for i=1:length(m)
-     time= (m(1,i)+interval*k);   
-     m(1,i)=fix(time/60)+(time-fix(time/60)*60)/100;
-end
-m=m';
-m(:,3)=2;
-m(:,4)=0.2;
+m(3,:)=2;
+m(4,:)=0.2;
+
+
+

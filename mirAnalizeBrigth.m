@@ -6,7 +6,7 @@ mirverbose(0); %mir doesn't write in command window
 AU = miraudio(audio',Fs);
 SPEC = mirspectrum(AU, 'Frame',0.1,'dB','Min', 15000, 'Max',35000);
 
-brightness = mirbrightness(SPEC,'CutOff',20000); %BRIGHTNESS quanta percentuale di energia sta sopra quella frequenza
+brightness = mirbrightness(SPEC,'CutOff',20000); %BRIGHTNESS and measuring the amount of energy above a fixed frequency
 b= mirgetdata(brightness)*100;
  
 duration=length(audio)/Fs;
@@ -23,11 +23,8 @@ findpeaks(b,T,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'
 [m(2,:),m(1,:)]=findpeaks(b,T,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents');
 m(3,:)=5;
 m(4,:)=0.2;
-for i=1:length(m)
-     time= (m(1,i)+interval*k);   
-     m(1,i)=fix(time/60)+(time-fix(time/60)*60)/100;
-end
-m=m';
+
+
 
 
 

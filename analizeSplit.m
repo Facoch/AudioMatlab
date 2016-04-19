@@ -14,18 +14,16 @@ spectrogram(audio, Nfft, Fs/50, Nfft, Fs,'yaxis');
 
 %search index of 15,20,35 kHz (FROM, TO1, TO2)
 FROM=searchFrequencyIndex(f,15000);%*Fs/96000);
-TO1=searchFrequencyIndex(f,30000);%*Fs/96000);
-TO2=searchFrequencyIndex(f,35000);%*Fs/96000);
+TO=searchFrequencyIndex(f,35000);%*Fs/96000);
 
 
 DIMT = size(t);
-%Il seguente ciclo scorre tutti i tempi e calcola la media delle potenze
-%spettrali 'ps' appartenenti alle frequenze comprese tra FROM (15kHz) e 
-%TO2(40kHz). Il risultato viene inserito nel vettore V lungo quanto i tempi 
-COUNT=1;
 V=[DIMT(2)];
-for j=1:DIMT(2)             %tempi del vettore t
-     V(j)=db(mean(ps(FROM:TO2,j))); %media dei valori compresi tra FROM e TO2
+%calculate frame by frame the mean of all the power spectral density 'ps' 
+%belonging to frequences [FROM, TO]Il seguente ciclo scorre tutti i tempi 
+%e calcola la media delle potenze. Put it in the array V, same length of t
+for j=1:DIMT(2)             		%tempi del vettore t
+     V(j)=db(mean(ps(FROM:TO,j))); 	%media dei valori compresi tra FROM e TO2
 end
 
 %calculate the moving average at 40%
@@ -37,12 +35,9 @@ V(V<movingAverage') = movingAverage(V<movingAverage');
 figure(k+2);
 findpeaks(V,t,'MinPeakProminence',5,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-245,'Annotate','extents')
 [m(2,:),m(1,:)]=findpeaks(V,t,'MinPeakProminence',5,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-245,'Annotate','extents');
-for i=1:length(m)
-     time= (m(1,i)+interval*k);   
-     m(1,i)=fix(time/60)+(time-fix(time/60)*60)/100;
-end
-m=m';
-m(:,3)=1;
-m(:,4)=0.2;
+m(3,:)=1;	
+m(4,:)=0.2;
+
+
 
 
