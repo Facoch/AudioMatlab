@@ -3,9 +3,12 @@ close all;
 clc;
 
 %import file
-file= 'Campioni_Tagliati_96_PrimaParte.wav';
+file = inputdlg({'Enter file name:'}, 'Name',[1 50],{'Campioni_Tagliati_96_PrimaParte'});
+file =file{1};
+tic
+%file= 'Campioni_Tagliati_96_PrimaParte';
 clear y Fs
-[y,Fs] = audioread(file);
+[y,Fs] = audioread(strcat(file,'.wav'));
 
 %inizialize some variables
 duration = length(y)/Fs;
@@ -16,6 +19,7 @@ Continuity=1;   %2
 mirCentroid =1; %3
 mirSkew=1;      %4
 mirBrigth=1;    %5
+hpFilter=1;     %6
 Channel=0;      %change channel (0 --> left, 1 --> right)
 
 if(Channel)   
@@ -38,29 +42,52 @@ end
 % MirSplit
 if(mirCentroid)   
         m= mirAnalizeSplit(y(:,1)',Fs,0, interval);
-        M=merger(M,m,'analizeContinuity'); 
+        M=merger(M,m,'mirAnalizeSplit'); 
 end
 
 % MirSkew
 if(mirSkew)   
         m= mirAnalizeSkew(y(:,1)',Fs,0, interval);
-        M=merger(M,m,'analizeContinuity'); 
+        M=merger(M,m,'mirAnalizeSkew'); 
 end
 
 % MirBrigth
 if(mirBrigth)   
         m= mirAnalizeBrigth(y(:,1)',Fs,0, interval);
-        M=merger(M,m,'analizeContinuity');  
+        M=merger(M,m,'mirAnalizeBrigth');  
+end
+
+% hpFilter
+if(hpFilter)   
+        m= hpFilt(y(:,1)',Fs,0, interval);
+        M=merger(M,m,'hpFilt');  
 end
 
 %add the index column
-M(5,:)=1:length(M);
-M'
-%T = array2table(M','VariableNames',{'Secondi','Valore','Algoritmo', 'Probability','Numero'})
 [rm, cm]=size(M);
-fileID = fopen('tagli.txt','a');
-fprintf(fileID,'\r\n\r\nRISULTATI FINALI\r\nSecondi    Valore    Algoritmo n°  Probabilità   Numero');
-for i=1:cm
-    fprintf(fileID,'\r\n%7.4f   %7.2f        %d           %3.2f          %2d',M(:,i));
+M(6,:)=1:cm;
+
+%T = array2table(M','VariableNames',{'Secondi','Valore','Algoritmo', 'Probability','Numero'})
+Real = fopen('real_cuts.txt','r');
+get = fgetl(Real);
+while(strcmp(file,get)==0 &&  ischar(get))
+    get = fgetl(Real)
 end
-fclose(fileID);
+A= fscanf(Real, '%f');
+fclose(Real);
+A=A'
+for i=1:cm
+    for j=1:length(A)
+      if abs(M(1,i)-A(j))<0.4
+        M(7,i)=A(j);
+      end
+    end
+end
+M'
+Result = fopen('result.txt','a');
+fprintf(Result,'\r\n\r\nRISULTATI FINALI\r\nSecondi    Valore    Algoritmo n°  Probabilità  Probabilità2   Numero        CUT');
+for i=1:cm
+    fprintf(Result,'\r\n%7.4f   %7.2f        %d           %3.2f         %3.2f          %2d       %7.2f',M(:,i));
+end
+fclose(Result);
+toc

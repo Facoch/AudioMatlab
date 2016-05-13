@@ -3,7 +3,7 @@
 function [m]= analizeSplit(audio,Fs, k, interval)
 
 %define FFT parameters
-Nfft= 8192;  
+Nfft= round(21*8192/40);  
 %generate the spectogram's matrices
 [s,f,t,ps]=spectrogram(audio, Nfft, Fs/50, Nfft, Fs);
 
@@ -31,12 +31,15 @@ movingAverage = smooth(V,0.4,'moving');
 %cuts the V values under moving average
 V(V<movingAverage') = movingAverage(V<movingAverage');
 
+
 %find peaks
+[m(2,:),m(1,:),w,p]=findpeaks(V,t,'MinPeakProminence',10,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-245,'Annotate','extents');
 figure(k+2);
-findpeaks(V,t,'MinPeakProminence',5,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-245,'Annotate','extents')
-[m(2,:),m(1,:)]=findpeaks(V,t,'MinPeakProminence',5,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.2, 'MinPeakHeight',-245,'Annotate','extents');
+plot(t,V,m(1,:),m(2,:),'o')
 m(3,:)=1;	
-m(4,:)=0.2;
+m(4,:)=1/6;
+m(5,:)=p/((sum(p)-10*numel(p)));
+
 
 
 

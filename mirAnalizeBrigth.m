@@ -18,11 +18,12 @@ movingAverage = smooth(b,0.4,'moving');
 b(b<movingAverage') = movingAverage(b<movingAverage');
 
 %find peaks
+[m(2,:),m(1,:),w,p]=findpeaks(b,T,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents');
 figure(k+7);
-findpeaks(b,T,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents')
-[m(2,:),m(1,:)]=findpeaks(b,T,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents');
+plot(T,b,m(1,:),m(2,:),'o')
 m(3,:)=5;
-m(4,:)=0.2;
+m(4,:)=1/6;
+m(5,:)=p/((sum(p)-0.8*numel(p)));
 
 
 
