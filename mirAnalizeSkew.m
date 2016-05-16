@@ -10,7 +10,7 @@ skewness = mirskewness(SPEC);        %SKEWNESS: asymmetry coefficient
 s= -mirgetdata(skewness)*100;
 
 duration=length(audio)/Fs;
-T=[duration/numel(s):duration/numel(s):duration];
+t=duration/numel(s):duration/numel(s):duration;
 
 %calculate the moving average at 40%
 movingAverage = smooth(s,0.4,'moving');
@@ -18,9 +18,12 @@ movingAverage = smooth(s,0.4,'moving');
 s(s<movingAverage') = movingAverage(s<movingAverage');
 
 %find peaks
-[m(2,:),m(1,:),w,p]=findpeaks(s,T,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents');
+[m(2,:),m(1,:),w,p]=findpeaks(s,t,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents');
 figure(k+6);
-plot(T,s,m(1,:),m(2,:),'o')
+plot(t,s,m(1,:),m(2,:),'o')
+xlim([t(1) t(end)]);
+grid on;
+
 m(3,:)=4;
 m(4,:)=1/6;
 m(5,:)=p/(sum(p)-0.8*numel(p));

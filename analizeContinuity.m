@@ -16,15 +16,15 @@ TO=searchFrequencyIndex(f,35000);
 
 %inizialize parameters
 DIMT = size(t);
-V=[DIMT(2)];
+V=DIMT(2);
  for j=1:DIMT(2)
-    S1=0;
-    S2=0;
+    
+    S=0;
     for i=FROM:TO  
-        S1 = S1+abs((ps(i,j)-ps(i+1,j)));
-        S2 = S2+abs((ps(i,j)-ps(i+10,j)));       
+        
+        S = S+abs((ps(i,j)-ps(i+10,j)));       
     end
-    pw=db(S2/(1+TO-FROM));
+    pw=db(S/(1+TO-FROM));
     V(j)=pw;
  end
 
@@ -37,6 +37,9 @@ V(V<movingAverage') = movingAverage(V<movingAverage');
 [m(2,:),m(1,:),w,p]= findpeaks(V,t,'MinPeakProminence',7,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.15, 'MinPeakHeight',-245,'Annotate','extents');
 figure(k+4);
 plot(t,V,m(1,:),m(2,:),'o')
+xlim([t(1) t(end)]);
+grid on;
+
 m(3,:)=2;
 m(4,:)=1/6;
 m(5,:)=p/((sum(p)-7*numel(p)));

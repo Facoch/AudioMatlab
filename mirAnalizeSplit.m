@@ -10,7 +10,7 @@ centroid= mircentroid(SPEC);	%calculate the centroid of each frame
 DATA= mirgetdata(centroid)/100;
 
 duration=length(audio)/Fs;
-T=[duration/numel(DATA):duration/numel(DATA):duration];
+t=duration/numel(DATA):duration/numel(DATA):duration;
 
 %calculate the moving average at 40%
 movingAverage = smooth(DATA,0.4,'moving');
@@ -18,9 +18,12 @@ movingAverage = smooth(DATA,0.4,'moving');
 DATA(DATA<movingAverage') = movingAverage(DATA<movingAverage');
 
 %find peaks
-[m(2,:),m(1,:),w,p]=findpeaks(DATA,T,'MinPeakProminence',0.6,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.1, 'MinPeakHeight',-245,'Annotate','extents');
+[m(2,:),m(1,:),w,p]=findpeaks(DATA,t,'MinPeakProminence',0.6,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.1, 'MinPeakHeight',-245,'Annotate','extents');
 figure(k+5);
-plot(T,DATA,m(1,:),m(2,:),'o')
+plot(t,DATA,m(1,:),m(2,:),'o')
+xlim([t(1) t(end)]);
+grid on;
+
 m(3,:)=3;
 m(4,:)=1/6;
 m(5,:)=p/((sum(p)-0.6*numel(p)));
