@@ -4,8 +4,9 @@ function [m]= analizeContinuity(audio,Fs, k, interval)
 
 %define FFT parameters
 Nfft= round(21*8192/40);  
+
 %generate the spectrogram's matrices
-[s,f,t,ps]=spectrogram(audio, Nfft, Fs/50, Nfft, Fs,'yaxis','MinThreshold', -205);
+[~,f,t,ps]=spectrogram(audio, Nfft, Fs/50, Nfft, Fs,'yaxis','MinThreshold', -205);
 %draw spectrograms
 %figure(k+3);
 %spectrogram(audio, Nfft, Fs/50), Nfft, Fs,'yaxis','MinThreshold', -205);  
@@ -34,14 +35,16 @@ movingAverage = smooth(V,0.4,'moving');
 V(V<movingAverage') = movingAverage(V<movingAverage');
 
 %find peaks
-[m(2,:),m(1,:),w,p]= findpeaks(V,t,'MinPeakProminence',7,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.15, 'MinPeakHeight',-245,'Annotate','extents');
+[m(2,:),m(1,:),~,p]= findpeaks(V,t,'MinPeakProminence',7,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.15, 'MinPeakHeight',-245,'Annotate','extents');
+
+%plot graph with peaks
 figure(k+4);
 plot(t,V,m(1,:),m(2,:),'o')
 xlim([t(1) t(end)]);
 grid on;
 
-m(3,:)=2;
-m(4,:)=1/6;
-m(5,:)=p/((sum(p)-7*numel(p)));
-
+%add information
+m(3,:)=2;           %number of algorythm
+m(4,:)=1/6;         %probability p1
+m(5,:)=p/sum(p);    %probability p2
 

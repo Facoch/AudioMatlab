@@ -2,9 +2,10 @@ function M= merger(A,B, str)
 
 [rb,cb]=size(B);
 if(strcmp(str,'analizeSplit'))
-    fileID = fopen('result.txt','w');
-end    
+    fileID = fopen('result.txt','w');   
+else
 fileID = fopen('result.txt','a');
+end
 fprintf(fileID,'\r\nRisultati di %s\r\n Secondi    Valore   Algoritmo n°   Probabilità   Probabilità2',str);
 for i=1:cb
     fprintf(fileID,'\r\n%7.4f    %7.2f         %d            %3.2f          %3.2f',B(:,i));
@@ -45,61 +46,51 @@ i1=1; i2=1; j=1;
 k=0.2;
    while(i1<=ca && i2<=cb)
       ok=1;
-      if(abs(A(1,i1)-B(1,i2))<k)
-           M(1:3,j)=A(1:3,i1);
+      if(abs(A(1,i1)-B(1,i2))<k)            %se sono abbastanza vicini --> sostituisco con la loro fusione
+           M(1,j)=(A(1,i1)*A(4,i1)*6+B(1,i2))/(A(4,i1)*6+1);     %media pesata tempi
+           M(2:3,j)=A(2:3,i1);
            M(4,j)=A(4,i1)+B(4,i2);
-           M(5,j)=A(5,i1);
+           M(5,j)=A(5,i1)+B(5,i2);
            i1=i1+1;
            i2=i2+1;
            j=j+1;
            ok=0;
       end 
-       if  ok 
-           if A(1,i1)<=B(1,i2)
-               M(:,j)=A(:,i1);
+       if  ok                       %se non è entrato nell'if precedente
+           ok1=1;
+           if A(1,i1)<=B(1,i2)              %se il primo di A viene prima del primo di B
+               M(:,j)=A(:,i1);              %-->aggiungo il primo di A
                i1=i1+1;
                j=j+1;
+               ok1=0;
            end
-           if  i1<=ca && A(1,i1)>B(1,i2)
-               M(:,j)=B(:,i2);
+           if  ok1 && A(1,i1)>B(1,i2)    %se il primo di B viene prima del primo di A (e non sono entrato nel precendente if)
+               M(:,j)=B(:,i2);              %-->aggiungo il primo di B
                i2=i2+1;
                j=j+1;
            end
        end
    end
-   while(i1<=ca)
-        if(j>1 && abs(M(1,j-1)-A(1,i1))<k)
-            M(4,j-1)=max(M(4,j-1),A(4,i1));
+   
+   while(i1<=ca)                            %se rimangono valori in A (B è finito)
+        if(j>1 && abs(M(1,j-1)-A(1,i1))<k)      %se M non è vuoto ma il valore del primo M è abbastanza vicino al primo di A
+            M(4,j-1)=max(M(4,j-1),A(4,i1));     %-->aggiorno p1 e p2 e lascio quel valore    
+            M(5,j-1)=max(M(5,j-1),A(5,i1));
             i1=i1+1;
-        else
-            M(:,j)=A(:,i1);
+        else                                    %se il valore del primo M è diverso dal primo di A (o M vuoto)
+            M(:,j)=A(:,i1);                     %-->aggiungo il primo di A
             i1=i1+1;
             j=j+1;
         end
    end
-   while(i2<=cb)
-        if(j>1 && abs(M(1,j-1)-B(1,i2))<k)
-            M(4,j-1)=max(M(4,j-1),B(4,i2));
+   while(i2<=cb)                            %se rimangono valori in B (A è finito)
+        if(j>1 && abs(M(1,j-1)-B(1,i2))<k)  %se M non è vuoto e il valore del primo M è abbastanza vicino al primo di B
+            M(4,j-1)=max(M(4,j-1),B(4,i2)); %-->aggiorno p1 e p2 e lascio quel valore
+            M(5,j-1)=max(M(5,j-1),B(5,i2));
             i2=i2+1;
-        else
-            M(:,j)=B(:,i2);
+        else                                    %se il valore del primo M è diverso dal primo di B (o M vuoto)
+            M(:,j)=B(:,i2);                     %-->aggiungo il primo di B
             i2=i2+1;
             j=j+1;
         end
    end 
-
-[rm,cm]=size(M);
-I=[];
-I(:,1)=M(:,1);
-COUNT=2;
-i=2;
-while(i~=cm+1)
-    while(i~=cm+1 && abs(I(1,COUNT-1)-M(1,i))<k)
-    I(2,COUNT-1)=max(I(2,COUNT-1),M(2,i));
-    i=i+1;
-    end
-    I(:,COUNT)=M(:,i);
-    i=i+1;
-    COUNT=COUNT+1;
-end
-M=I;
