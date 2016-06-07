@@ -23,9 +23,10 @@ b(b<movingAverage') = movingAverage(b<movingAverage');
 
 %plot graph with peaks
 figure(k+7);
-plot(t,b,m(1,:),m(2,:),'o')
-xlim([t(1) t(end)]);
-grid on;
+findpeaks(b,t,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents')
+% plot(t,b,m(1,:),m(2,:),'o')
+% xlim([t(1) t(end)]);
+% grid on;
 
 %add information
 m(3,:)=5;           %number of algorythm

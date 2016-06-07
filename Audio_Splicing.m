@@ -14,6 +14,7 @@ clear y Fs
 duration = length(y)/Fs;
 interval=duration;
 M=[];
+%choose which algorithms enable
 SplitLeft =1;   %1
 Continuity=1;   %2 
 mirCentroid =1; %3
@@ -64,7 +65,10 @@ if(hpFilter)
         M=merger(M,m,'hpFilt');  
 end
 
-
+if isempty(M)
+    disp('Nessun taglio trovato'); 
+    return  
+end
 [rm, cm]=size(M);
 %add the index column
 M(6,:)=1:cm;
@@ -83,7 +87,7 @@ fclose(Real);
 A=A';
 for i=1:cm
     for j=1:length(A)
-      if abs(M(1,i)-A(j))<0.4
+      if abs(M(1,i)-A(j))<0.15
         M(7,i)=A(j);
       end
     end
@@ -99,7 +103,7 @@ end
 fclose(Result);
 
 %clean the table from near data
-k=0.2;
+k=0.1;
 [rm,cm]=size(M);
 n=[];
 n(:,1)=M(:,1);
@@ -123,22 +127,23 @@ n(:,((n(4,:)<0.18)+(n(5,:)<9))==2)=[];
 n(:,((n(4,:)<0.34)+(n(5,:)<8))==2)=[];
 n(:,((n(4,:)<0.51)+(n(5,:)<6))==2)=[];
 n(:,((n(4,:)<0.68)+(n(5,:)<5))==2)=[];
+n(:,((n(4,:)<0.84)+(n(5,:)<4))==2)=[];
 n'   
 
 %start the coherence process for all the more likely data
 if(cohere)
     [rm, cm]=size(n);
     picco = LoadPicco();
-    c=[];
+    p3=[];
     for i=1:cm
         fprintf('valuto il numero %d', i);
-        c(i) = CFR(y, n(1,i)-0.2,n(1,i)+0.2, Fs, picco)
+        p3(i) = CFR(y, n(1,i)-0.1,n(1,i)+0.1, Fs, picco)
     end
-    n(8,:) = c;
+    n(6,:) = p3;
     Result = fopen('result.txt','a');
-    fprintf(Result,'\r\n\r\nRISULTATI FINALI\r\nSecondi    Valore    Algoritmo n°  Probabilità  Probabilità2   Numero        CUT    Probabilità3');
+    fprintf(Result,'\r\n\r\nRISULTATI FINALI\r\nSecondi    Valore    Algoritmo n°  Probabilità  Probabilità2    Probabilità3        CUT');
     for i=1:cm
-        fprintf(Result,'\r\n%7.4f   %7.2f        %d           %3.2f         %3.2f          %2d       %7.2f     %3.2f',n(:,i));
+        fprintf(Result,'\r\n%7.4f   %7.2f        %d           %4.2f         %4.2f             %4.2f         %7.2f',n(:,i));
     end
     fclose(Result);
 end

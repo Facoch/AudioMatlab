@@ -43,7 +43,7 @@ i1=1; i2=1; j=1;
 % B = B(:,I);
 
 
-k=0.2;
+k=0.1;
    while(i1<=ca && i2<=cb)
       ok=1;
       if(abs(A(1,i1)-B(1,i2))<k)            %se sono abbastanza vicini --> sostituisco con la loro fusione

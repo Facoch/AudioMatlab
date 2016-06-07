@@ -7,7 +7,7 @@ AU = miraudio(audio',Fs);
 SPEC = mirspectrum(AU, 'Frame',0.1,'dB','Min', 15000, 'Max',35000);
 
 skewness = mirskewness(SPEC);        %SKEWNESS: asymmetry coefficient
-s= mirgetdata(skewness)*100;
+s=-mirgetdata(skewness)*100;
 
 %creating the vector of the times with same length of the data vector
 duration=length(audio)/Fs;
@@ -16,7 +16,7 @@ t=duration/numel(s):duration/numel(s):duration;
 %calculate the moving average at 40%
 movingAverage = smooth(s,0.4,'moving');
 %cuts the V values under moving average
-s(s>movingAverage') = movingAverage(s>movingAverage');
+s(s<movingAverage') = movingAverage(s<movingAverage');
 
 %find peaks
 [m(2,:),m(1,:),~,p]=findpeaks(s,t,'MinPeakProminence',0.8,'MinPeakDistance', 0.15,'Threshold',1e-4,'Annotate','extents');

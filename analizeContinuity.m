@@ -39,9 +39,10 @@ V(V<movingAverage') = movingAverage(V<movingAverage');
 
 %plot graph with peaks
 figure(k+4);
-plot(t,V,m(1,:),m(2,:),'o')
-xlim([t(1) t(end)]);
-grid on;
+findpeaks(V,t,'MinPeakProminence',7,'MinPeakDistance', 0.15, 'MaxPeakWidth', 0.15, 'MinPeakHeight',-245,'Annotate','extents')
+% plot(t,V,m(1,:),m(2,:),'o')
+% xlim([t(1) t(end)]);
+% grid on;
 
 %add information
 m(3,:)=2;           %number of algorythm
