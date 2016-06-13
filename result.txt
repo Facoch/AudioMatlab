@@ -1,0 +1,21 @@
+
+Risultati di analizeSplit
+ Secondi    Valore   Algoritmo n°   Probabilità   Probabilità2
+Risultati di analizeContinuity
+ Secondi    Valore   Algoritmo n°   Probabilità   Probabilità2
+Risultati di mirAnalizeSplit
+ Secondi    Valore   Algoritmo n°   Probabilità   Probabilità2
+ 8.9413     251.19         3            0.17          1.00
+Risultati di mirAnalizeSkew
+ Secondi    Valore   Algoritmo n°   Probabilità   Probabilità2
+ 8.9326       2.18         4            0.17          1.00
+Risultati di mirAnalizeBrigth
+ Secondi    Valore   Algoritmo n°   Probabilità   Probabilità2
+ 8.9326      76.35         5            0.17          1.00
+Risultati di hpFilt
+ Secondi    Valore   Algoritmo n°   Probabilità   Probabilità2
+ 8.9155       0.00         6            0.17          1.00
+
+RISULTATI FINALI
+Secondi    Valore    Algoritmo n°  Probabilità  Probabilità2   Numero        CUT
+ 8.9305    251.19        3           0.67         100.00           1       

@@ -3,7 +3,7 @@ close all;
 clc;
 
 %import file
-file = inputdlg({'Enter file name:'}, 'Name',[1 50],{'Campioni_Tagliati_96_PrimaParte'});
+file = inputdlg({'Enter file name:'}, 'Name',[1 50],{'Campioni_Tagliati_96'});
 file =file{1};
 tic
 %file= 'Campioni_Tagliati_96_PrimaParte';
